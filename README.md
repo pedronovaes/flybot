@@ -19,3 +19,22 @@ backup_file = './travel2.backup.sqlite'
 
 get_data(file=local_file, backup_file=backup_file)
 ```
+
+### Test a tool separately
+
+If you want to test a specific tool (with the object to verify if its behavior is ok, for example), you can instantiate the tool object, and feed it with a configuration argument:
+
+```python
+from flybot.tools.flights import fetch_user_flight_information
+
+configurable = {
+    'passenger_id': '123',
+    'db': './travel2.sqlite'
+}
+
+# Invoke the tool. This tool, specifically, returns a list of dictionaries containing informations about user flight and it respective tickets.
+fetch_user_flight_information.invoke(
+    input={},
+    config={'configurable': configurable}
+)
+```
