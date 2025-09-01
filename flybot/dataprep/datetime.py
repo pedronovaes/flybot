@@ -7,8 +7,6 @@ import sqlite3
 
 import pandas as pd
 
-from IPython.display import display
-
 
 def update_dates(file: str, backup_file: str) -> str:
     """
