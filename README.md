@@ -32,7 +32,8 @@ configurable = {
     'db': './travel2.sqlite'
 }
 
-# Invoke the tool. This tool, specifically, returns a list of dictionaries containing informations about user flight and it respective tickets.
+# Invoke the tool. This tool, specifically, returns a list of dictionaries
+# containing informations about user flight and it respective tickets.
 fetch_user_flight_information.invoke(
     input={},
     config={'configurable': configurable}
