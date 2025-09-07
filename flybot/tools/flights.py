@@ -3,6 +3,7 @@ Chatbot's tools for flights topics, such as search for flights and manage the
 passenger's bookings stored in the db.
 """
 
+import pytz
 import sqlite3
 from typing import Optional
 from datetime import date, datetime
@@ -113,3 +114,55 @@ def search_flights(
     conn.close()
 
     return results
+
+
+@tool
+def cancel_ticket(ticket_no: str, *, config: RunnableConfig) -> str:
+    """
+    Cancel the user's ticket and remove it from the database.
+    """
+
+    configuration = config.get('configurable', {})
+    passenger_id = configuration.get('passenger_id', None)
+    db = configuration.get('db', '')
+
+    if not passenger_id:
+        raise ValueError('No passenger ID configured.')
+
+    conn = sqlite3.connect(database=db)
+    cursor = conn.cursor()
+
+    # Check if the ticket exists.
+    query = "select flight_id from ticket_flights where ticket_no = ?"
+    cursor.execute(query, (ticket_no,))
+    existing_ticket = cursor.fetchone()
+
+    if not existing_ticket:
+        cursor.close()
+        conn.close()
+
+        return 'No existing ticket found for the given ticket number.'
+
+    # Check the signed-in user actually has this ticket.
+    query = "select ticket_no from tickets where ticket_no = ? and passenger_id = ?"
+    cursor.execute(query, (ticket_no, passenger_id))
+    current_ticket = cursor.fetchone()
+
+    if not current_ticket:
+        cursor.close()
+        conn.close()
+
+        return (
+            f"Current signed-in passenger with ID {passenger_id} "
+            f"not the owner of ticket {ticket_no}"
+        )
+
+    # Passed all validations.
+    query = "delete from ticket_flights where ticket_no = ?"
+    cursor.execute(query, (ticket_no,))
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    return 'Ticket successfully cancelled.'
