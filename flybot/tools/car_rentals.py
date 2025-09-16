@@ -1,3 +1,8 @@
+"""
+Chatbot's tools for car rentals topics, such as search car rentals, book,
+update, and cancel a car rentals.
+"""
+
 import sqlite3
 from typing import Optional
 from datetime import date, datetime
@@ -79,6 +84,71 @@ def book_car_rental(rental_id: int, config: RunnableConfig) -> str:
 
     if cursor.rowcount > 0:
         return_message = f"Car rental {rental_id} successfully booked."
+    else:
+        return_message = f"No car rental found with ID {rental_id}."
+
+    cursor.close()
+    conn.close()
+
+    return return_message
+
+
+@tool
+def update_car_rental(
+    config: RunnableConfig,
+    rental_id: int,
+    start_date: Optional[datetime | date] = None,
+    end_date: Optional[datetime | date] = None
+) -> str:
+    """
+    Update a car rental's start and end dates by its ID.
+    """
+
+    configurable = config.get('configurable', {})
+    db = configurable.get('db', '')
+
+    conn = sqlite3.connect(database=db)
+    cursor = conn.cursor()
+
+    if start_date:
+        query = "update car_rentals set start_date = ? where id = ?"
+        cursor.execute(query, (start_date, rental_id))
+
+    if end_date:
+        query = "update car_rentals set end_date = ? where id = ?"
+        cursor.execute(query, (end_date, rental_id))
+
+    conn.commit()
+
+    if cursor.rowcount > 0:
+        return_message = f"Car rental {rental_id} successfully updated."
+    else:
+        return_message = f"No car rental found with ID {rental_id}."
+
+    cursor.close()
+    conn.close()
+
+    return return_message
+
+
+@tool
+def cancel_car_rental(rental_id: int, config: RunnableConfig) -> str:
+    """
+    Cancel a car rental by its ID.
+    """
+
+    configurable = config.get('configurable', {})
+    db = configurable.get('db', '')
+
+    conn = sqlite3.connect(database=db)
+    cursor = conn.cursor()
+
+    query = "update car_rentals set booked = 0 where id = ?"
+    cursor.execute(query, (rental_id,))
+    conn.commit()
+
+    if cursor.rowcount > 0:
+        return_message = f"Car rental {rental_id} successfully cancelled."
     else:
         return_message = f"No car rental found with ID {rental_id}."
 
