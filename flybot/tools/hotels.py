@@ -83,3 +83,74 @@ def book_hotel(hotel_id: int, config: RunnableConfig) -> str:
     conn.close()
 
     return return_message
+
+
+@tool
+def update_hotel(
+    config: RunnableConfig,
+    hotel_id: int,
+    checkin_date: Optional[datetime | date] = None,
+    checkout_date: Optional[datetime | date] = None
+) -> str:
+    """
+    Update a hotel's check-in and check-out dates by its ID.
+
+    Returns:
+        A message indicating whether the hotel was successfully updated or not.
+    """
+
+    configurable = config.get('configurable', {})
+    db = configurable.get('db', '')
+
+    conn = sqlite3.connect(database=db)
+    cursor = conn.cursor()
+
+    if checkin_date:
+        query = "update hotels set checkin_date = ? where id = ?"
+        cursor.execute(query, (checkin_date, hotel_id))
+
+    if checkout_date:
+        query = "update hotels set checkout_date = ? where id = ?"
+        cursor.execute(query, (checkout_date, hotel_id))
+
+    conn.commit()
+
+    if cursor.rowcount > 0:
+        return_message = f"Hotel {hotel_id} successfully updated."
+    else:
+        return_message = f"No hotel found with ID {hotel_id}."
+
+    cursor.close()
+    conn.close()
+
+    return return_message
+
+
+@tool
+def cancel_hotel(hotel_id: int, config: RunnableConfig) -> str:
+    """
+    Cancel a hotel by its ID.
+
+    Returns:
+        A message indicating whether the hotel was successfully cancelled or not.
+    """
+
+    configurable = config.get('configurable', {})
+    db = configurable.get('db', '')
+
+    conn = sqlite3.connect(database=db)
+    cursor = conn.cursor()
+
+    query = "update hotels set booked = 0 where id = ?"
+    cursor.execute(query, (hotel_id,))
+    conn.commit()
+
+    if cursor.rowcount > 0:
+        return_message = f"Hotel {hotel_id} successfully cancelled."
+    else:
+        return_message = f"No hotel found with ID {hotel_id}."
+
+    cursor.close()
+    conn.close()
+
+    return return_message
