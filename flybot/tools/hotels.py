@@ -27,8 +27,8 @@ def search_hotels(
         A list of hotel dictionaries matching the search criteria.
     """
 
-    configurable = config.get('configurable', {})
-    db = configurable.get('db', '')
+    configuration = config.get('configurable', {})
+    db = configuration.get('db', '')
 
     conn = sqlite3.connect(database=db)
     cursor = conn.cursor()
@@ -64,8 +64,8 @@ def book_hotel(hotel_id: int, config: RunnableConfig) -> str:
         A message indicating whether the hotel was successfully booked or not.
     """
 
-    configurable = config.get('configurable', {})
-    db = configurable.get('db', '')
+    configuration = config.get('configurable', {})
+    db = configuration.get('db', '')
 
     conn = sqlite3.connect(database=db)
     cursor = conn.cursor()
@@ -99,8 +99,8 @@ def update_hotel(
         A message indicating whether the hotel was successfully updated or not.
     """
 
-    configurable = config.get('configurable', {})
-    db = configurable.get('db', '')
+    configuration = config.get('configurable', {})
+    db = configuration.get('db', '')
 
     conn = sqlite3.connect(database=db)
     cursor = conn.cursor()
@@ -135,8 +135,8 @@ def cancel_hotel(hotel_id: int, config: RunnableConfig) -> str:
         A message indicating whether the hotel was successfully cancelled or not.
     """
 
-    configurable = config.get('configurable', {})
-    db = configurable.get('db', '')
+    configuration = config.get('configurable', {})
+    db = configuration.get('db', '')
 
     conn = sqlite3.connect(database=db)
     cursor = conn.cursor()

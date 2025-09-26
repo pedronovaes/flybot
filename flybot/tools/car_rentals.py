@@ -72,8 +72,8 @@ def book_car_rental(rental_id: int, config: RunnableConfig) -> str:
     Book a car rental by its ID.
     """
 
-    configurable = config.get('configurable', {})
-    db = configurable.get('db', '')
+    configuration = config.get('configurable', {})
+    db = configuration.get('db', '')
 
     conn = sqlite3.connect(database=db)
     cursor = conn.cursor()
@@ -104,8 +104,8 @@ def update_car_rental(
     Update a car rental's start and end dates by its ID.
     """
 
-    configurable = config.get('configurable', {})
-    db = configurable.get('db', '')
+    configuration = config.get('configurable', {})
+    db = configuration.get('db', '')
 
     conn = sqlite3.connect(database=db)
     cursor = conn.cursor()
@@ -137,8 +137,8 @@ def cancel_car_rental(rental_id: int, config: RunnableConfig) -> str:
     Cancel a car rental by its ID.
     """
 
-    configurable = config.get('configurable', {})
-    db = configurable.get('db', '')
+    configuration = config.get('configurable', {})
+    db = configuration.get('db', '')
 
     conn = sqlite3.connect(database=db)
     cursor = conn.cursor()
